@@ -13,7 +13,8 @@ const ADDR_COL_IDX: usize = DECODER_TRACE_OFFSET + vm_core::decoder::ADDR_COL_ID
 // DECODER AUXILIARY TRACE COLUMNS
 // ================================================================================================
 
-/// TODO: add docs
+/// Builds and returns decoder auxiliary trace columns p1, p2, and p3 describing states of block
+/// stack, block hash, and op group tables respectively.
 pub fn build_aux_columns<E: FieldElement<BaseField = Felt>>(
     main_trace: &Matrix<Felt>,
     aux_trace_hints: &AuxTraceHints,
