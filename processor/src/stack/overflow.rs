@@ -10,6 +10,7 @@ use super::{super::trace::LookupTableRow, BTreeMap, Felt, FieldElement, Vec, ZER
 ///
 /// When `trace_enabled` is set to true, we also record all changes to the table so that we can
 /// reconstruct the overflow table at any clock cycle. This can be used for debugging purposes.
+/// TODO: update comments
 pub struct OverflowTable {
     all_rows: Vec<OverflowTableRow>,
     active_rows: Vec<usize>,
@@ -36,6 +37,7 @@ impl OverflowTable {
     // --------------------------------------------------------------------------------------------
 
     /// Pushes the specified value into the overflow table.
+    /// TODO: update comment
     pub fn push(&mut self, value: Felt, clk: usize) {
         let prev = self
             .active_rows
@@ -46,7 +48,7 @@ impl OverflowTable {
         self.active_rows.push(self.all_rows.len() - 1);
 
         self.update_trace
-            .push((clk, OverflowTableUpdate::InsertRow));
+            .push((clk, OverflowTableUpdate::RowInserted));
 
         if self.trace_enabled {
             // insert a copy of the current table state into the trace
@@ -58,12 +60,13 @@ impl OverflowTable {
     /// cycle of the next value in the table.
     ///
     /// If after the top value is removed the table is empty, the returned clock cycle is ZERO.
+    /// TODO: update comment
     pub fn pop(&mut self, clk: usize) -> (Felt, Felt) {
         let last_row_idx = self.active_rows.pop().expect("overflow table is empty");
         let last_row = &self.all_rows[last_row_idx];
 
         self.update_trace
-            .push((clk, OverflowTableUpdate::RemoveRow));
+            .push((clk, OverflowTableUpdate::RowRemoved(last_row_idx)));
 
         if self.trace_enabled {
             // insert a copy of the current table state into the trace
@@ -104,6 +107,7 @@ impl OverflowTable {
     // HINT GENERATION
     // --------------------------------------------------------------------------------------------
 
+    /// TODO: add comment
     pub fn into_hints(self) -> AuxTraceHints {
         AuxTraceHints {
             overflow_hints: self.update_trace,
@@ -149,16 +153,18 @@ impl LookupTableRow for OverflowTableRow {
 
 /// Describes an update to the stack overflow table. There could be two types of updates:
 /// - A single row can be added to the table. This happens during a right shift.
-/// - A single row can be removed from the table. This happens during a left shift.
+/// - A single row can be removed from the table. This happens during a left shift. For this update
+///   we also track the index of the row that was removed.
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub enum OverflowTableUpdate {
-    InsertRow,
-    RemoveRow,
+    RowInserted,
+    RowRemoved(usize),
 }
 
 // AUXILIARY TRACE HINTS
 // ================================================================================================
 
+/// TODO: update comment
 pub struct AuxTraceHints {
     overflow_hints: Vec<(usize, OverflowTableUpdate)>,
     overflow_table_rows: Vec<OverflowTableRow>,
