@@ -67,7 +67,11 @@ pub struct DecoderTrace {
     aux_trace_hints: decoder::AuxTraceHints,
 }
 
-type StackTrace = [Vec<Felt>; STACK_TRACE_WIDTH];
+pub struct StackTrace {
+    trace: [Vec<Felt>; STACK_TRACE_WIDTH],
+    aux_trace_hints: stack::AuxTraceHints,
+}
+
 type AuxTableTrace = [Vec<Felt>; AUX_TABLE_WIDTH]; // TODO: potentially rename to AuxiliaryTrace
 
 pub struct RangeCheckTrace {
